@@ -1,0 +1,18 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: example-constraint-template
+spec:
+  crd:
+    spec:
+      names:
+        kind: ExampleConstraint
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package example
+
+        violation[{"msg": msg}] {
+          input.review.object.metadata.annotations["example.com/allowed"] != "true"
+          msg := "Annotation 'example.com/allowed' must be set to 'true'"
+        }
